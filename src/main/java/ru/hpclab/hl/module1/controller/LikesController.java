@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.hpclab.hl.module1.model.Likes;
 import ru.hpclab.hl.module1.service.LikesService;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping
@@ -23,12 +24,12 @@ public class LikesController {
     }
 
     @GetMapping("/likes/{id}")
-    public Likes getLikesById(@PathVariable String id) {
+    public Likes getLikesById(@PathVariable UUID id) {
         return likesService.getLikesById(id);
     }
 
     @DeleteMapping("/likes/{id}")
-    public void deleteLikes(@PathVariable String id) {
+    public void deleteLikes(@PathVariable UUID id) {
         likesService.deleteLikes(id);
     }
 
@@ -38,7 +39,7 @@ public class LikesController {
     }
 
     @PutMapping(value = "/likes/{id}")
-    public Likes updateLikes(@PathVariable(required = false) String id, @RequestBody Likes likes) {
+    public Likes updateLikes(@PathVariable(required = false) UUID id, @RequestBody Likes likes) {
         return likesService.updateLikes(id, likes);
     }
 

@@ -1,86 +1,78 @@
 package ru.hpclab.hl.module1.model;
 
-
 import org.springframework.lang.NonNull;
+import jakarta.persistence.*;
+import ru.hpclab.hl.module1.Entity.PostEntity;
+import ru.hpclab.hl.module1.Entity.UserEntity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Likes {
 
-    @NonNull
-    private UUID identifier;
-    @NonNull
-    private String fio;
-    @NonNull
-    private LocalDateTime publicationDate;
+@Id
+@GeneratedValue(strategy = GenerationType.UUID) // Автоматическая генерация UUID
+@Column(name = "id")
+@NonNull
+private UUID Id;
 
-    @NonNull
-    private UUID postId;
+private LocalDateTime publication_date;
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "userPostId", nullable = false)
+private PostEntity userPostId;
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "user_id", nullable = false)
+private UserEntity user_id;
 
-    @NonNull
-    private UUID userId;
-
-    public Likes( @NonNull String fio, @NonNull UUID identifier, @NonNull UUID postId, @NonNull UUID userId) {
-        this.identifier = identifier;
-        this.fio = fio;
-        this.postId = postId;
-        this.userId = userId;
+    public Likes(  @NonNull UUID Id, @NonNull PostEntity userPostId, @NonNull UserEntity user_id) {
+        this.Id = Id;
+        this.userPostId = userPostId;
+        this.user_id = user_id;
     }
 
     public Likes() {
+   }
+
+    public UUID getId() {
+        return Id;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public void setId(UUID Id) {
+        this.Id = Id;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public UserEntity getUserId() {
+        return user_id;
     }
 
-    public UUID getPostId() {
-        return postId;
+    public void setUserId(UserEntity userId) {
+        this.user_id = userId;
     }
 
-    public void setPostId(UUID postId) {
-        this.postId = postId;
+    public PostEntity getUserPostId() {
+        return userPostId;
     }
 
-    @NonNull
-    public UUID getIdentifier() {
-        return identifier;
+    public void setUserPostId(PostEntity userPostId) {
+        this.userPostId = userPostId;
     }
 
-    public void setIdentifier(@NonNull UUID identifier) {
-        this.identifier = identifier;
-    }
 
-    @NonNull
-    public String getfio() {
-        return fio;
-    }
-
-    public void setfio(@NonNull String fio) {
-        this.fio = fio;
-    }
 
     @NonNull
     public LocalDateTime getPublicationDate() { //getter for new field
-        return publicationDate;
+        return publication_date;
     }
 
     public void setPublicationDate(@NonNull LocalDateTime publicationDate) { //setter for new field
-        this.publicationDate = publicationDate;
+        this.publication_date = publicationDate;
     }
 
     @Override
     public String toString() {
         return "Likes{" +
-                "identifier_post=" + identifier +
-                ", post=" + postId + '\'' +
-                ", fio='" + fio + '\'' +
-                ", publicationDate=" + publicationDate +
+                ", post=" + userPostId + '\'' +
+                ", publicationDate=" + publication_date +
                 '}';
     }
 

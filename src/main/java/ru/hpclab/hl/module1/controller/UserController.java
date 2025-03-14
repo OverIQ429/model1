@@ -2,9 +2,11 @@ package ru.hpclab.hl.module1.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.hpclab.hl.module1.Entity.UserEntity;
 import ru.hpclab.hl.module1.model.User;
 import ru.hpclab.hl.module1.service.UserService;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class UserController {
@@ -22,12 +24,12 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public User getUserById(@PathVariable String id) {
+    public User getUserById(@PathVariable UserEntity id) {
         return userService.getUserById(id);
     }
 
     @DeleteMapping("/users/{id}")
-    public void deleteUser(@PathVariable String id) {
+    public void deleteUser(@PathVariable UserEntity id) {
         userService.deleteUser(id);
     }
 
@@ -37,7 +39,8 @@ public class UserController {
     }
 
     @PutMapping(value = "/users/{id}")
-    public User updateUser(@PathVariable(required = false) String id, @RequestBody User user) {
+    public User updateUser(@PathVariable(required = false)
+                               UserEntity id, @RequestBody User user) {
         return userService.updateUser(id, user);
     }
 

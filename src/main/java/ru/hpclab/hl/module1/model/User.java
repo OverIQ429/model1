@@ -1,21 +1,27 @@
 package ru.hpclab.hl.module1.model;
 
 
+import jakarta.persistence.*;
 import org.springframework.lang.NonNull;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-
 public class User {
 
-    @NonNull
-    private UUID identifier;
-    @NonNull
-    private String fio;
-    @NonNull
-    private String email;
-    @NonNull
-    private LocalDateTime registrationDate;
+@Id
+@GeneratedValue(strategy = GenerationType.UUID) // Автоматическая генерация UUID
+@Column(name = "id")
+@NonNull
+private UUID identifier;
+@Column(name = "name")
+@NonNull
+private String fio;
+@Column(name = "mail")
+@NonNull
+private String email;
+@Column(name = "date")
+@NonNull
+private LocalDateTime registrationDate;
 
     public User(@NonNull UUID identifier, @NonNull String fio, @NonNull String email) {
         this.identifier = identifier;

@@ -2,6 +2,7 @@ package ru.hpclab.hl.module1.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.hpclab.hl.module1.Entity.PostEntity;
 import ru.hpclab.hl.module1.model.Post;
 import ru.hpclab.hl.module1.service.PostService;
 
@@ -25,12 +26,14 @@ public class PostController {
     }
 
     @GetMapping("/posts/{id}")
-    public Post getPostById(@PathVariable String id) {
+    public Post getPostById(@PathVariable
+                            PostEntity id) {
         return postService.getPostById(id);
     }
 
     @DeleteMapping("/posts/{id}")
-    public void deletePost(@PathVariable String id) {
+    public void deletePost(@PathVariable
+                               PostEntity id) {
         postService.deletePost(id);
     }
 
@@ -40,7 +43,8 @@ public class PostController {
     }
 
     @PutMapping(value = "/posts/{id}")
-    public Post updatePost(@PathVariable(required = false) String id, @RequestBody Post post) {
+    public Post updatePost(@PathVariable(required = false)
+                               PostEntity id, @RequestBody Post post) {
         return postService.updatePost(id, post);
     }
 

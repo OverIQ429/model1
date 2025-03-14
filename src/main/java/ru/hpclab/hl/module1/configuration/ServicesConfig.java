@@ -7,7 +7,9 @@ import ru.hpclab.hl.module1.model.User;
 import ru.hpclab.hl.module1.repository.UserRepository;
 import ru.hpclab.hl.module1.service.StatisticsService;
 import ru.hpclab.hl.module1.service.UserService;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
+import javax.sql.DataSource;
 import java.util.UUID;
 
 @Configuration
@@ -17,7 +19,7 @@ public class ServicesConfig {
     UserService userService(UserRepository userRepository) {
         UserService userService = new UserService(userRepository);
         for (int i = 0; i < 5; i++) {
-            userRepository.save(new User(UUID.randomUUID(), "new super user", "somemail.ru"));
+            //userRepository.save(new User(UUID.randomUUID(), "new super user", "somemail.ru"));
         }
         return userService;
     }

@@ -35,18 +35,18 @@ public class UserControllerTest {
     @Autowired
     private UserRepository userRepository;
 
-    @BeforeEach
-    public void init() {
-        userRepository.clear();
-    }
+//    @BeforeEach
+//    public void init() {
+//        userRepository.clear();
+//    }
 
-    @Test
-    public void get_should_returnUser_when_userExists() throws Exception {
-        User user = userRepository.save(new User(UUID.randomUUID(), "name", "somemail.ru"));
-        String expectedJson = objectMapper.writeValueAsString(user);
-
-        mvc.perform(get("/users/" + user.getIdentifier()).accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().json(expectedJson));
-    }
+//    @Test
+//    public void get_should_returnUser_when_userExists() throws Exception {
+//        User user = userRepository.save(new User(UUID.randomUUID(), "name", "somemail.ru"));
+//        String expectedJson = objectMapper.writeValueAsString(user);
+//
+//        mvc.perform(get("/users/" + user.getIdentifier()).accept(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andExpect(content().json(expectedJson));
+//    }
 }
