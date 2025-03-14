@@ -2,6 +2,7 @@ package ru.hpclab.hl.module1.service;
 
 import org.springframework.stereotype.Service;
 import ru.hpclab.hl.module1.Entity.PostEntity;
+import ru.hpclab.hl.module1.Entity.UserEntity;
 import ru.hpclab.hl.module1.model.Post;
 import ru.hpclab.hl.module1.repository.PostRepository;
 
@@ -79,6 +80,7 @@ public class PostService {
         postEntity.setId(id);
         postEntity.setText(post.getText());
         postEntity.setPublicationDate(post.getPublicationDate());
+
         // Вам нужно получить UserEntity по ownerId из User
         // и установить его в postEntity.setOwner()
         // Например:

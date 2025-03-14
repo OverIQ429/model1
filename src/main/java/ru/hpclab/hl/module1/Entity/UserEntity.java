@@ -20,6 +20,8 @@ public class UserEntity {
     private String email;
     @Column(name = "registrationDate")
     private LocalDateTime registrationDate;
+    @Column(name = "selflikes")
+    private Integer SelfLikes;
     public UserEntity() {
     }
 
@@ -47,6 +49,14 @@ public class UserEntity {
         this.fio = fio;
     }
 
+    public Integer getSelfLikes() {
+        return SelfLikes;
+    }
+
+    public void setSelfLikes(Integer value) {
+        SelfLikes = value;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -70,6 +80,7 @@ public class UserEntity {
                 "id=" + identifier +
                 ", fio='" + fio + '\'' +
                 ", mail=" + email +
+                ", likes=" + SelfLikes +
                 '}';
     }
 }

@@ -24,6 +24,7 @@ private PostEntity userPostId;
 @JoinColumn(name = "user_id", nullable = false)
 private UserEntity user_id;
 
+
     public Likes(  @NonNull UUID Id, @NonNull PostEntity userPostId, @NonNull UserEntity user_id) {
         this.Id = Id;
         this.userPostId = userPostId;

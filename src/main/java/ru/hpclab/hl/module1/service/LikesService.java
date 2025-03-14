@@ -85,7 +85,21 @@ public class LikesService {
         }
         if (likeEntity.getPublicationDate() != null)
             likes.setPublicationDate(likeEntity.getPublicationDate());
+        CheckOwner(likes);
+
+
         return likes;
+    }
+
+    private Likes CheckOwner(Likes like) {
+        UserEntity User = like.getUserId();
+        PostEntity Post = like.getUserPostId();
+        UserEntity Owner = Post.getOwner();
+        if (User == Owner) {
+            User.setSelfLikes(1);
+            return like;
+        }
+        return like;
     }
 
     private LikeEntity convertToLikeEntity(Likes likes) {

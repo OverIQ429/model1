@@ -22,11 +22,14 @@ private String email;
 @Column(name = "date")
 @NonNull
 private LocalDateTime registrationDate;
+@Column(name = "selflikes")
+private Integer SelfLikes;
 
     public User(@NonNull UUID identifier, @NonNull String fio, @NonNull String email) {
         this.identifier = identifier;
         this.fio = fio;
         this.email = email;
+        this.SelfLikes = 0;
     }
 
     public User() {
@@ -48,6 +51,14 @@ private LocalDateTime registrationDate;
 
     public void setFio(@NonNull String fio) {
         this.fio = fio;
+    }
+
+    public Integer getSelfLikes() {
+        return SelfLikes;
+    }
+
+    public void setSelfLikes(Integer value) {
+        SelfLikes += value;
     }
 
     @NonNull
