@@ -67,8 +67,13 @@ public class UserRepository {
         return user;
     }
 
-    public void clear(){
-        users.clear();
+    public void deleteAll() {
+        try {
+            users.clear(); // Для in-memory
+            // или для JPA: userJpaRepository.deleteAll();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to clear users: " + e.getMessage());
+        }
     }
 
 }

@@ -30,6 +30,14 @@ public class LikesRepository {
         }
     }
 
+    public void deleteAll() {
+        try {
+            likes.clear(); // Для in-memory
+            // или для JPA: userJpaRepository.deleteAll();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to clear users: " + e.getMessage());
+        }
+    }
     public Likes findById(UUID id) {
         final var liked = likes.get(id);
         if (liked == null) {

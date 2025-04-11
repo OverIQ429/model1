@@ -12,6 +12,9 @@ public class LikesService {
 
     private final LikesRepository likesRepository;
 
+    public void clearAllLikes() {
+        likesRepository.deleteAll();
+    }
     public LikesService(LikesRepository likesRepository) {
         this.likesRepository = likesRepository;
     }

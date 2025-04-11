@@ -36,6 +36,11 @@ public class UserController {
         return userService.saveUser(client);
     }
 
+
+    @DeleteMapping("/users/clear")
+    public void clearAllUsers() {
+        userService.clearAllUsers();
+    }
     @PutMapping(value = "/users/{id}")
     public User updateUser(@PathVariable(required = false) String id, @RequestBody User user) {
         return userService.updateUser(id, user);

@@ -12,6 +12,11 @@ import java.util.UUID;
 @RequestMapping
 public class PostController {
 
+
+    @DeleteMapping("/posts/clear")
+    public void clearAllPosts() {
+        postService.clearAllPosts();
+    }
     private final PostService postService;
 
     @Autowired

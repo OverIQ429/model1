@@ -12,6 +12,15 @@ import static java.lang.String.format;
 @Repository
 public class PostRepository {
 
+    public void deleteAll() {
+        try {
+            posts.clear(); // Для in-memory
+            // или для JPA: userJpaRepository.deleteAll();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to clear users: " + e.getMessage());
+        }
+    }
+
     public static final String POST_NOT_FOUND_MSG = "Post with ID %s not found";
     public static final String POST_EXISTS_MSG = "Post with ID %s is already exists";
 

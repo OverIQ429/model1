@@ -32,6 +32,11 @@ public class LikesController {
         likesService.deleteLikes(id);
     }
 
+    @DeleteMapping("/likes/clear")
+    public void clearAllLikes() {
+        likesService.clearAllLikes();
+    }
+
     @PostMapping(value = "/likes/")
     public Likes saveLikes(@RequestBody Likes likes) {
         return likesService.saveLikes(likes);

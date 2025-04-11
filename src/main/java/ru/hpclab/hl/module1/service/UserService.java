@@ -22,6 +22,9 @@ public class UserService {
         return userRepository.findById(UUID.fromString(id));
     }
 
+    public void clearAllUsers() {
+        userRepository.deleteAll();
+    }
     public User saveUser(User user) {
         return userRepository.save(user);
     }
