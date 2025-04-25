@@ -50,8 +50,8 @@ services:
       - app-network
     environment:
       DB_URL: jdbc:postgresql://10.60.3.26:5432/Social-NetWork
-      DB_USERNAME: ${DB_USERNAME:-jimmy}
-      DB_PASSWORD: ${DB_PASSWORD:-jimmy}
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
       SERVER_PORT: 8081
     deploy:
       resources:
