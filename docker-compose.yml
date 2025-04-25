@@ -1,38 +1,4 @@
 services:
-  init-db:
-    image: python:3.11-alpine
-    container_name: db-init
-    volumes:
-      - ./initdb:/initdb
-    working_dir: /initdb
-    entrypoint: ["python", "init_db_script.py"]
-    networks:
-      - app-network
-
-  database:
-    image: postgres:16
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    container_name: pg-docker
-    restart: always
-    environment:
-      POSTGRES_USER: ${DB_USERNAME:-jimmy}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-jimmy}
-      POSTGRES_DB: ${DB_NAME:-Social-NetWork}
-    ports:
-      - "${DB_PORT:-5432}:5432"
-    networks:
-      - app-network
-    depends_on:
-      init-db:
-        condition: service_completed_successfully
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-jimmy} -d ${DB_NAME:-Social-NetWork}"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 60s
-
   app:
     image: socialnetwork
     deploy:
@@ -45,28 +11,22 @@ services:
           memory: 256M
     container_name: spring-boot-app
     restart: always
-    depends_on:
-      database:
-        condition: service_healthy
     ports:
       - "${APP_PORT:-8080}:8080"
     networks:
       - app-network
     environment:
-      DB_URL: jdbc:postgresql://database:5432/Social-NetWork
+      DB_URL: jdbc:postgresql://10.60.3.26:5432/Social-NetWork
       DDL_AUTO: ${DDL_AUTO:-validate}
       SHOW_SQL: ${SHOW_SQL:-true}
       DB_HOST: ${DB_HOST:-database}
       DB_PORT: ${DB_PORT:-5432}
       DB_NAME: ${DB_NAME:-Social-NetWork}
-      DB_USERNAME: ${DB_USERNAME:-jimmy}
-      DB_PASSWORD: ${DB_PASSWORD:-jimmy}
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
       DB_DIALECT: ${DB_DIALECT:-org.hibernate.dialect.PostgreSQLDialect}
       TOMCAT_MAX_THREADS: ${TOMCAT_MAX_THREADS:-200}  # Правильный синтаксис
       READ_WRITE_RATIO: ${READ_WRITE_RATIO:-50_50} # Правильный синтаксис
-
-
-
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -79,9 +39,25 @@ services:
       - "${PGADMIN_PORT:-5050}:80"
     networks:
       - app-network
-    depends_on:
-      database:
-        condition: service_healthy
+
+  additional-service:
+    image: additional-service:1.0.0  # Укажите имя вашего образа additional-service
+    container_name: additional-service-app
+    restart: always
+    ports:
+      - "8081:8081"
+    networks:
+      - app-network
+    environment:
+      DB_URL: jdbc:postgresql://10.60.3.26:5432/Social-NetWork
+      DB_USERNAME: ${DB_USERNAME:-jimmy}
+      DB_PASSWORD: ${DB_PASSWORD:-jimmy}
+      SERVER_PORT: 8081
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
 volumes:
   db_data:
 

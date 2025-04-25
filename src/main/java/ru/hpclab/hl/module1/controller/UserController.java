@@ -24,10 +24,10 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/users/selflikes")
-    public List<Map<String, Object>> getselflikesUsers() {
-        return userService.getSelflikesUser();
-    }
+//    @GetMapping("/users/selflikes")
+//    public List<Map<String, Object>> getselflikesUsers() {
+//        return userService.getSelflikesUser();
+//    }
 
     @GetMapping("/users/{id}")
     public User getUserById(@PathVariable UUID id) {
