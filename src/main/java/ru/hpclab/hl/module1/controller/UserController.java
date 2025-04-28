@@ -12,17 +12,21 @@ import java.util.UUID;
 @RestController
 @RequestMapping
 public class UserController {
-    ObservabilityService observabilityService;
+    private final ObservabilityService observabilityService;
     private final UserService userService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(ObservabilityService observabilityService, UserService userService) {
+        this.observabilityService = observabilityService;
         this.userService = userService;
     }
 
     @GetMapping("/users")
     public List<User> getUsers() {
-        return userService.getAllUsers();
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
+        List<User> term = userService.getAllUsers();
+        this.observabilityService.stop(getClass().getSimpleName() + ":create");
+        return term;
     }
 
     @GetMapping("/users/{id}")
