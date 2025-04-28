@@ -1,6 +1,7 @@
 package ru.hpclab.hl.module1.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,7 @@ public class LikesService {
     public void clearAllLikes() {
         likesRepository.deleteAll();
     }
-
+    @Autowired
     public LikesService(JpaLikesRepository likesRepository, JpaPostRepository postRepository, ObservabilityService observabilityService) {
         this.likesRepository = likesRepository;
         this.observabilityService = observabilityService;
