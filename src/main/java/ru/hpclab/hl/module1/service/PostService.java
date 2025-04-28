@@ -10,6 +10,7 @@ import ru.hpclab.hl.module1.repository.JpaPostRepository;
 @Service
 public class PostService {
 
+    private final ObservabilityService observability;
     private final JpaPostRepository postRepository;
 
     @Transactional
@@ -17,20 +18,36 @@ public class PostService {
         postRepository.deleteAll();
     }
     @Autowired
-    public PostService(JpaPostRepository postRepository) {
+    public PostService(ObservabilityService observability, JpaPostRepository postRepository) {
+        this.observability = observability;
         this.postRepository = postRepository;
     }
 
     public List<Post> getAllPosts() {
-        return postRepository.findAll();
+        long start = System.nanoTime();
+        try {
+            return postRepository.findAll();
+        } finally {
+            observability.recordTiming("PostService.getAllPosts", System.nanoTime() - start);
+        }
     }
 
     public Post getPostById(String id) {
-        return postRepository.findById(UUID.fromString(id)).orElse(null);
+        long start = System.nanoTime();
+        try {
+            return postRepository.findById(UUID.fromString(id)).orElse(null);
+        } finally {
+            observability.recordTiming("PostService.getPostById", System.nanoTime() - start);
+        }
     }
 
     public Post savePost(Post post) {
-        return postRepository.save(post);
+        long start = System.nanoTime();
+        try {
+            return postRepository.save(post);
+        } finally {
+            observability.recordTiming("PostService.savePost", System.nanoTime() - start);
+        }
     }
 
     public void deletePost(String id) {

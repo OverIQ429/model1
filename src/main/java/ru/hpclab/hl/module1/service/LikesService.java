@@ -1,5 +1,6 @@
 package ru.hpclab.hl.module1.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +13,10 @@ import java.util.*;
 import ru.hpclab.hl.module1.repository.JpaPostRepository;
 import ru.hpclab.hl.module1.model.Post;
 @Service
+@RequiredArgsConstructor
 public class LikesService {
 
+    private final ObservabilityService observability;
     private static final Logger logger = LoggerFactory.getLogger(LikesService.class);
     private final JpaLikesRepository likesRepository;
 
@@ -23,8 +26,9 @@ public class LikesService {
         likesRepository.deleteAll();
     }
 
-    public LikesService(JpaLikesRepository likesRepository, JpaPostRepository postRepository) {
+    public LikesService(JpaLikesRepository likesRepository, JpaPostRepository postRepository, ObservabilityService observability) {
         this.likesRepository = likesRepository;
+        this.observability = observability;
     }
 
     public List<Likes> getAllLikes() {
@@ -32,7 +36,12 @@ public class LikesService {
     }
 
     public Likes getLikesById(String id) {
-        return likesRepository.findById(UUID.fromString(id)).orElse(null);
+        long start = System.nanoTime();
+        try {
+            return likesRepository.findById(UUID.fromString(id)).orElse(null);
+        } finally {
+            observability.recordTiming("LikesService.getLikesById", System.nanoTime() - start);
+        }
     }
 
     public Likes saveLikes(Likes likes) {

@@ -1,55 +1,81 @@
 package ru.hpclab.hl.module1.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.hpclab.hl.module1.model.Likes;
 import ru.hpclab.hl.module1.service.LikesService;
+import ru.hpclab.hl.module1.service.ObservabilityService;
+import java.util.Map;
 import java.util.List;
 
 @RestController
-@RequestMapping
+@RequestMapping("/likes")
 public class LikesController {
 
+    private final ObservabilityService observabilityService;
     private final LikesService likesService;
 
     @Autowired
-    public LikesController(LikesService likesService) {
+    public LikesController(ObservabilityService observabilityService, LikesService likesService) {
+        this.observabilityService = observabilityService;
         this.likesService = likesService;
     }
 
-    @GetMapping("/likes")
+    @GetMapping()
     public List<Likes> getLikes() {
-        return likesService.getAllLikes();
+        long start = System.nanoTime();
+        try {
+            return likesService.getAllLikes();}
+        finally{
+            observabilityService.recordTiming("likecontroller.getLikes",
+                    System.nanoTime() - start);
+        }
     }
 
-    @GetMapping("/likes/{id}")
+    @GetMapping("{id}")
     public Likes getLikesById(@PathVariable String id) {
-        return likesService.getLikesById(id);
+        long start = System.nanoTime();
+        try {
+        return likesService.getLikesById(id);}
+        finally{
+            observabilityService.recordTiming("likecontroller.getLikesById",
+                    System.nanoTime() - start);}
     }
 
-    @DeleteMapping("/likes/{id}")
+    @DeleteMapping("/{id}")
     public void deleteLikes(@PathVariable String id) {
         likesService.deleteLikes(id);
     }
 
-    @DeleteMapping("/likes/clear")
+    @DeleteMapping("/clear")
     public void clearAllLikes() {
         likesService.clearAllLikes();
     }
 
-    @PostMapping(value = "/likes/")
+    @PostMapping(value = "/")
     public Likes saveLikes(@RequestBody Likes likes) {
-        return likesService.saveLikes(likes);
+        long start = System.nanoTime();
+        try {
+            return likesService.saveLikes(likes);}
+        finally{
+            observabilityService.recordTiming("likecontroller.saveLikes",
+                    System.nanoTime() - start);
+        }
+
     }
 
-    @PutMapping(value = "/likes/{id}")
+    @PutMapping(value = "/{id}")
     public Likes updateLikes(@PathVariable(required = false) String id, @RequestBody Likes likes) {
         return likesService.updateLikes(id, likes);
     }
 
-    @GetMapping("/likes/selflikes")
-    public List<Likes> get_selfLikes() {
-        return likesService.getAllLikes();
+    @GetMapping("/monitoring/stats/{operation}")
+    @Operation(summary = "Get operation statistics")
+    public Map<String, Map<String, Number>> getStats(
+            @Parameter(description = "Operation name")
+            @PathVariable String operation) {
+        return observabilityService.getStatistics(operation);
     }
-
 }

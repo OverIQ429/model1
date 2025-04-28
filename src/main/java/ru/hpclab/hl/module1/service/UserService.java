@@ -17,13 +17,16 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
 
+    private final ObservabilityService observability;
+
     private final JpaUserRepository userRepository;
     private final JpaPostRepository postRepository;
     private final JpaLikesRepository likesRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class); // Исправлена инициализация логгера
 
 
-    public UserService(JpaUserRepository  userRepository, JpaPostRepository postRepository, JpaLikesRepository likesRepository) {
+    public UserService(ObservabilityService observability, JpaUserRepository  userRepository, JpaPostRepository postRepository, JpaLikesRepository likesRepository) {
+        this.observability = observability;
         this.userRepository = userRepository;
         this.postRepository = postRepository;
         this.likesRepository = likesRepository;
@@ -31,22 +34,42 @@ public class UserService {
 
     @Transactional
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        long start = System.nanoTime();
+        try {
+            return userRepository.findAll();
+        } finally {
+            observability.recordTiming("UserService.getAllUsers", System.nanoTime() - start);
+        }
     }
 
     public User getUserById(UUID id) {
-        logger.info("Получение пользователя по ID: {}", id);
-        return userRepository.findById(id).orElse(null);
+        long start = System.nanoTime();
+        try {
+            logger.info("Получение пользователя по ID: {}", id);
+            return userRepository.findById(id).orElse(null);
+        } finally {
+            observability.recordTiming("UserService.getUserById", System.nanoTime() - start);
+        }
     }
 
     public void clearAllUsers() {
-        userRepository.deleteAll();
+        long start = System.nanoTime();
+        try {
+            userRepository.deleteAll();
+        } finally {
+            observability.recordTiming("UserService.clearAllUsers", System.nanoTime() - start);
+        }
     }
     public User saveUser(User user) {
-        logger.info("Сохранение пользователя: {}", user);
-        User savedUser = userRepository.save(user);
-        logger.info("Пользователь успешно сохранен: {}", savedUser);
-        return userRepository.save(user);
+        long start = System.nanoTime();
+        try {
+            logger.info("Сохранение пользователя: {}", user);
+            User savedUser = userRepository.save(user);
+            logger.info("Пользователь успешно сохранен: {}", savedUser);
+            return userRepository.save(user);
+        } finally {
+            observability.recordTiming("UserService.saveUser", System.nanoTime() - start);
+        }
     }
 
     public void deleteUser(String id) {
