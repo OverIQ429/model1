@@ -9,14 +9,14 @@ import ru.hpclab.hl.module1.model.Likes;
 import ru.hpclab.hl.module1.repository.JpaLikesRepository;
 
 import java.util.*;
-
+import ru.hpclab.hl.module1.service.statistics.ObservabilityService;
 import ru.hpclab.hl.module1.repository.JpaPostRepository;
 import ru.hpclab.hl.module1.model.Post;
 @Service
 @RequiredArgsConstructor
 public class LikesService {
 
-    private final ObservabilityService observability;
+    private final ObservabilityService observabilityService;
     private static final Logger logger = LoggerFactory.getLogger(LikesService.class);
     private final JpaLikesRepository likesRepository;
 
@@ -26,9 +26,9 @@ public class LikesService {
         likesRepository.deleteAll();
     }
 
-    public LikesService(JpaLikesRepository likesRepository, JpaPostRepository postRepository, ObservabilityService observability) {
+    public LikesService(JpaLikesRepository likesRepository, JpaPostRepository postRepository, ObservabilityService observabilityService) {
         this.likesRepository = likesRepository;
-        this.observability = observability;
+        this.observabilityService = observabilityService;
     }
 
     public List<Likes> getAllLikes() {
@@ -36,25 +36,32 @@ public class LikesService {
     }
 
     public Likes getLikesById(String id) {
-        long start = System.nanoTime();
-        try {
-            return likesRepository.findById(UUID.fromString(id)).orElse(null);
-        } finally {
-            observability.recordTiming("LikesService.getLikesById", System.nanoTime() - start);
-        }
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
+        Likes term = likesRepository.findById(UUID.fromString(id)).orElse(null);
+        this.observabilityService.stop(getClass().getSimpleName() + ":clearAllArtists");
+        return term;
+
     }
 
     public Likes saveLikes(Likes likes) {
-        return likesRepository.save(likes);
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
+        Likes term =  likesRepository.save(likes);
+        this.observabilityService.stop(getClass().getSimpleName() + ":clearAllArtists");
+        return term;
     }
 
     public void deleteLikes(String id) {
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
         likesRepository.deleteById(UUID.fromString(id));
+        this.observabilityService.stop(getClass().getSimpleName() + ":clearAllArtists");
     }
 
     public Likes updateLikes(String id, Likes likes) {
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
         likes.setIdentifier(UUID.fromString(id));
-        return likesRepository.save(likes);
+        Likes term = likesRepository.save(likes);
+        this.observabilityService.stop(getClass().getSimpleName() + ":clearAllArtists");
+        return term;
     }
 
 //    public Map<UUID, List<UUID>> get_selfLikes(UUID userId, UUID postId) {

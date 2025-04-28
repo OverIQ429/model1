@@ -13,11 +13,11 @@ import ru.hpclab.hl.module1.repository.JpaUserRepository;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
+import ru.hpclab.hl.module1.service.statistics.ObservabilityService;
 @Service
 public class UserService {
 
-    private final ObservabilityService observability;
+    private final ObservabilityService observabilityService;
 
     private final JpaUserRepository userRepository;
     private final JpaPostRepository postRepository;
@@ -25,8 +25,8 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class); // Исправлена инициализация логгера
 
 
-    public UserService(ObservabilityService observability, JpaUserRepository  userRepository, JpaPostRepository postRepository, JpaLikesRepository likesRepository) {
-        this.observability = observability;
+    public UserService( ObservabilityService observabilityService, JpaUserRepository  userRepository, JpaPostRepository postRepository, JpaLikesRepository likesRepository) {
+        this.observabilityService = observabilityService;
         this.userRepository = userRepository;
         this.postRepository = postRepository;
         this.likesRepository = likesRepository;
@@ -34,55 +34,42 @@ public class UserService {
 
     @Transactional
     public List<User> getAllUsers() {
-        long start = System.nanoTime();
-        try {
-            return userRepository.findAll();
-        } finally {
-            observability.recordTiming("UserService.getAllUsers", System.nanoTime() - start);
-        }
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
+        List<User> term = userRepository.findAll();
+        this.observabilityService.stop(getClass().getSimpleName() + ":clearAllArtists");
+        return term;
     }
 
     public User getUserById(UUID id) {
-        long start = System.nanoTime();
-        try {
-            logger.info("Получение пользователя по ID: {}", id);
-            return userRepository.findById(id).orElse(null);
-        } finally {
-            observability.recordTiming("UserService.getUserById", System.nanoTime() - start);
-        }
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
+        User term = userRepository.findById(id).orElse(null);
+        this.observabilityService.stop(getClass().getSimpleName() + ":clearAllArtists");
+        return term;
     }
 
     public void clearAllUsers() {
-        long start = System.nanoTime();
-        try {
-            userRepository.deleteAll();
-        } finally {
-            observability.recordTiming("UserService.clearAllUsers", System.nanoTime() - start);
-        }
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
+        userRepository.deleteAll();
+        this.observabilityService.stop(getClass().getSimpleName() + ":clearAllArtists");
     }
     public User saveUser(User user) {
-        long start = System.nanoTime();
-        try {
-            logger.info("Сохранение пользователя: {}", user);
-            User savedUser = userRepository.save(user);
-            logger.info("Пользователь успешно сохранен: {}", savedUser);
-            return userRepository.save(user);
-        } finally {
-            observability.recordTiming("UserService.saveUser", System.nanoTime() - start);
-        }
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
+        User savedUser = userRepository.save(user);
+        this.observabilityService.stop(getClass().getSimpleName() + ":clearAllArtists");
+        return savedUser;
     }
 
     public void deleteUser(String id) {
-        logger.info("Удаление пользователя с ID: {}", id);
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
         userRepository.deleteById(UUID.fromString(id));
-        logger.info("Пользователь с ID {} успешно удален", id);
+        this.observabilityService.stop(getClass().getSimpleName() + ":clearAllArtists");
     }
 
     public User updateUser(String id, User user) {
-        logger.info("Обновление пользователя с ID: {}, Данные: {}", id, user);
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
         user.setIdentifier(UUID.fromString(id));
         User updatedUser = userRepository.save(user);
-        logger.info("Пользователь с ID {} успешно обновлен", id);
+        this.observabilityService.stop(getClass().getSimpleName() + ":clearAllArtists");
         return updatedUser;
     }
 

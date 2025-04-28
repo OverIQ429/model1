@@ -4,75 +4,67 @@ package ru.hpclab.hl.module1.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.hpclab.hl.module1.model.Post;
-import ru.hpclab.hl.module1.service.ObservabilityService;
 import ru.hpclab.hl.module1.service.PostService;
 import java.util.Map;
 import java.util.List;
-import java.util.UUID;
+import ru.hpclab.hl.module1.service.statistics.ObservabilityService;
 
 @RestController
 @RequestMapping
 public class PostController {
-    ObservabilityService observabilityService;
+    private final ObservabilityService observabilityService;
 
     @DeleteMapping("/posts/clear")
     public void clearAllPosts() {
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
         postService.clearAllPosts();
+        this.observabilityService.stop(getClass().getSimpleName() + ":create");
     }
     private final PostService postService;
 
     @Autowired
-    public PostController(PostService postService) {
+    public PostController(ObservabilityService observabilityService, PostService postService) {
+        this.observabilityService = observabilityService;
         this.postService = postService;
     }
 
     @GetMapping("/posts")
     public List<Post> getPosts() {
-        long start = System.nanoTime();
-        try {
-            return postService.getAllPosts();}
-        finally{
-            observabilityService.recordTiming("postcontroller.getPosts",
-                    System.nanoTime() - start);
-        }
-    }
-
-    @GetMapping("/posts/stats/{operation}")
-    public Map<String, Map<String, Number>> getStats(
-            @PathVariable String operation) {
-        return observabilityService.getStatistics(operation);
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
+        List<Post> term = postService.getAllPosts();
+        this.observabilityService.stop(getClass().getSimpleName() + ":create");
+        return term;
     }
 
     @GetMapping("/posts/{id}")
     public Post getPostById(@PathVariable String id) {
-        long start = System.nanoTime();
-        try {
-            return postService.getPostById(id);
-        }finally{
-            observabilityService.recordTiming("postcontroller.getPostById",
-                    System.nanoTime() - start);
-        }
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
+        Post term = postService.getPostById(id);
+        this.observabilityService.stop(getClass().getSimpleName() + ":create");
+        return term;
     }
 
     @DeleteMapping("/posts/{id}")
     public void deletePost(@PathVariable String id) {
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
         postService.deletePost(id);
+        this.observabilityService.stop(getClass().getSimpleName() + ":create");
     }
 
     @PostMapping(value = "/posts/")
     public Post savePost(@RequestBody Post post) {
-        long start = System.nanoTime();
-        try {
-        return postService.savePost(post);}
-        finally{
-            observabilityService.recordTiming("postcontroller.savePost",
-                    System.nanoTime() - start);
-        }
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
+        Post term = postService.savePost(post);
+        this.observabilityService.stop(getClass().getSimpleName() + ":create");
+        return term;
     }
 
     @PutMapping(value = "/posts/{id}")
     public Post updatePost(@PathVariable(required = false) String id, @RequestBody Post post) {
-        return postService.updatePost(id, post);
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
+        Post term = postService.updatePost(id, post);
+        this.observabilityService.stop(getClass().getSimpleName() + ":create");
+        return term;
     }
 
 }

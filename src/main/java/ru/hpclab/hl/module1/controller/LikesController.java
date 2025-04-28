@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.hpclab.hl.module1.model.Likes;
 import ru.hpclab.hl.module1.service.LikesService;
-import ru.hpclab.hl.module1.service.ObservabilityService;
+import ru.hpclab.hl.module1.service.statistics.ObservabilityService;
 import java.util.Map;
 import java.util.List;
 
@@ -25,57 +25,52 @@ public class LikesController {
 
     @GetMapping()
     public List<Likes> getLikes() {
-        long start = System.nanoTime();
-        try {
-            return likesService.getAllLikes();}
-        finally{
-            observabilityService.recordTiming("likecontroller.getLikes",
-                    System.nanoTime() - start);
-        }
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
+        List<Likes> temp = likesService.getAllLikes();
+        this.observabilityService.stop(getClass().getSimpleName() + ":create");
+        return temp;
     }
+
+
+
 
     @GetMapping("{id}")
     public Likes getLikesById(@PathVariable String id) {
-        long start = System.nanoTime();
-        try {
-        return likesService.getLikesById(id);}
-        finally{
-            observabilityService.recordTiming("likecontroller.getLikesById",
-                    System.nanoTime() - start);}
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
+        Likes term = likesService.getLikesById(id);
+        this.observabilityService.stop(getClass().getSimpleName() + ":create");
+        return term;
+
     }
 
     @DeleteMapping("/{id}")
     public void deleteLikes(@PathVariable String id) {
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
         likesService.deleteLikes(id);
+        this.observabilityService.stop(getClass().getSimpleName() + ":create");
     }
 
     @DeleteMapping("/clear")
     public void clearAllLikes() {
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
         likesService.clearAllLikes();
+        this.observabilityService.stop(getClass().getSimpleName() + ":create");
     }
 
     @PostMapping(value = "/")
     public Likes saveLikes(@RequestBody Likes likes) {
-        long start = System.nanoTime();
-        try {
-            return likesService.saveLikes(likes);}
-        finally{
-            observabilityService.recordTiming("likecontroller.saveLikes",
-                    System.nanoTime() - start);
-        }
-
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
+        Likes term = likesService.saveLikes(likes);
+        this.observabilityService.stop(getClass().getSimpleName() + ":create");
+        return term;
     }
 
     @PutMapping(value = "/{id}")
     public Likes updateLikes(@PathVariable(required = false) String id, @RequestBody Likes likes) {
-        return likesService.updateLikes(id, likes);
+        this.observabilityService.start(getClass().getSimpleName() + ":create");
+        Likes term = likesService.updateLikes(id, likes);
+        this.observabilityService.stop(getClass().getSimpleName() + ":create");
+        return term;
     }
 
-    @GetMapping("/monitoring/stats/{operation}")
-    @Operation(summary = "Get operation statistics")
-    public Map<String, Map<String, Number>> getStats(
-            @Parameter(description = "Operation name")
-            @PathVariable String operation) {
-        return observabilityService.getStatistics(operation);
-    }
 }
