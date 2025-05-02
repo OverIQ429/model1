@@ -1,5 +1,6 @@
 package ru.hpclab.hl.module1.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.hpclab.hl.module1.model.Likes;
@@ -25,6 +26,7 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class); // Исправлена инициализация логгера
 
 
+    @Autowired
     public UserService( ObservabilityService observabilityService, JpaUserRepository  userRepository, JpaPostRepository postRepository, JpaLikesRepository likesRepository) {
         this.observabilityService = observabilityService;
         this.userRepository = userRepository;
@@ -36,7 +38,7 @@ public class UserService {
     public List<User> getAllUsers() {
         this.observabilityService.start(getClass().getSimpleName() + ":create");
         List<User> term = userRepository.findAll();
-        this.observabilityService.stop(getClass().getSimpleName() + ":clearAllArtists");
+        this.observabilityService.stop(getClass().getSimpleName() + ":getAllUsers");
         return term;
     }
 
