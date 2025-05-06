@@ -1,4 +1,4 @@
-package ru.hpclab.hl.module1.kafkamodule.configuration;
+package ru.hpclab.hl.module1.configuration;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -11,44 +11,38 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @EnableKafka
 @Configuration
 public class KafkaConsumerConfig {
-    @Value("${kafka.hosts:hl22.zil:9094,hl23.zil:9094}")
-    private List<String> bootstrapAddresses;
 
-    @Value("${kafka.groupId:seryak0ff-consumer-group}")
+    @Value("${KAFKA_HOSTS:hl22.zil:9094,hl23.zil:9094}")
+    private String bootstrapServers;
+
+    @Value("${KAFKA_GROUP_ID:aviation-consumer-group}")
     private String groupId;
+
+    @Value("${KAFKA_CONCURRENCY:3}")
+    private int concurrency;
 
     @Bean
     public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
-        props.put(
-                ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
-                bootstrapAddresses);
-        props.put(
-                ConsumerConfig.GROUP_ID_CONFIG,
-                groupId);
-        props.put(
-                ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
-                StringDeserializer.class);
-        props.put(
-                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
-                StringDeserializer.class);
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         return new DefaultKafkaConsumerFactory<>(props);
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, String>
-    kafkaListenerContainerFactory() {
-
+    public ConcurrentKafkaListenerContainerFactory<String, String> batchFactory() {
         ConcurrentKafkaListenerContainerFactory<String, String> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
-        factory.setBatchListener(true);
+        factory.setBatchListener(true);  // Включаем batch-режим
+        factory.setConcurrency(3);       // Количество потоков
         return factory;
     }
 }
