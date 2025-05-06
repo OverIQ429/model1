@@ -1,5 +1,40 @@
 services:
 
+#  init-db:
+#    image: python:3.11-alpine
+#    container_name: db-init
+#    volumes:
+#      - ./initdb:/initdb
+#    working_dir: /initdb
+#    entrypoint: [ "python", "init_db_script.py" ]
+#    networks:
+#      - app-network
+
+#  database:
+#    image: postgres:16
+#    volumes:
+#      - db_data:/var/lib/postgresql/data
+#    container_name: pg-docker
+#    restart: always
+#    environment:
+#      POSTGRES_USER: ${DB_USERNAME:-jimmy}
+#      POSTGRES_PASSWORD: ${DB_PASSWORD:-jimmy}
+#      POSTGRES_DB: ${DB_NAME:-Social-NetWork}
+#    ports:
+#      - "${DB_PORT:-5432}:5432"
+#    networks:
+#      - app-network
+#    depends_on:
+#      init-db:
+#        condition: service_completed_successfully
+#    healthcheck:
+#      test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME:-jimmy} -d ${DB_NAME:-Social-NetWork}" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 10
+#      start_period: 60s
+
+
   app:
     image: socialnetwork
     deploy:
